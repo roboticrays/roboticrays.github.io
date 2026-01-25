@@ -71,7 +71,7 @@
       justify-content:space-between;
       gap: 14px;
       position: sticky;
-      top: 0;
+      top: 52;
       backdrop-filter: blur(10px);
       background: linear-gradient(to bottom, rgba(7,10,18,0.85), rgba(7,10,18,0.35));
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -356,6 +356,24 @@
   <div class="glow"></div>
 
   <div class="wrap">
+
+    <div style="
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(124,92,255,0.16);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(10px);
+    ">
+      <div style="max-width:1120px;margin:0 auto;padding:10px 20px;
+        display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+        <div style="color:rgba(255,255,255,0.85);font-size:13px;">
+          🚧 <b>Under construction:</b> We’re iterating quickly—website content and demos will be updated regularly.
+        </div>
+        <a class="btn" href="#contact" style="padding:8px 12px;border-radius:12px;font-size:13px;box-shadow:none;">
+          Join pilot list
+        </a>
+      </div>
+    </div>
+
     <header>
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
@@ -378,7 +396,7 @@
           — automatically.
         </h1>
         <p class="lead">
-          RoboticRays builds autonomous scanning systems that capture products, reconstruct accurate 3D models,
+          RoboticRays builds autonomous scanning systems that capture products and objects, reconstruct accurate 3D models,
           and deliver consistent digital assets at scale. Built for speed, repeatability, and measurable quality.
         </p>
         <div class="cta">
@@ -415,7 +433,7 @@
         </div>
         <div class="item reveal">
           <div class="badge"><span class="pill"></span><b>3D reconstruction</b></div>
-          <p>Multi-view geometry + learned priors to reconstruct detail while staying metrically accurate.</p>
+          <p>High-detail 3D reconstruction with reliable scale and quality checks.</p>
         </div>
         <div class="item reveal">
           <div class="badge"><span class="pill"></span><b>Asset delivery</b></div>
@@ -467,10 +485,22 @@
       <div class="panel reveal">
         <div class="cardTitle">Pilot fit</div>
         <div style="color:var(--muted); line-height:1.6; font-size:14px;">
-          If you digitize many SKUs (retail, manufacturing, spare parts) and care about consistent 3D quality, we’d love to talk.
-          We’re especially interested in workflows that need repeatability, metric accuracy, and automation.
+          If you work with physical objects that benefit from high-quality digital representation, such as
+          products, crafted goods, design objects, or curated collections and care about consistency and visual
+          fidelity, we’d love to talk. We’re especially interested in teams that want repeatable results, predictable quality, and workflows
+          that scale beyond one-off manual scans.
+          We share technical architecture and performance details during pilot conversations (and under NDA when needed).
         </div>
       </div>
+
+      <div class="panel reveal" style="margin-top:14px;">
+        <div class="cardTitle">Who it’s for</div>
+        <div style="color:var(--muted); line-height:1.6; font-size:14px;">
+          RoboticRays is designed for teams working with physical objects that deserve high-quality digital
+          representation from commercial catalogs to crafted goods, design objects, and curated collections.
+        </div>
+      </div>
+
     </section>
 
     <section id="contact">
