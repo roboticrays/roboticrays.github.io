@@ -1,618 +1,103 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RoboticRays — 3D Vision & Robotics</title>
-  <meta name="description" content="RoboticRays builds 3D vision + robotics systems for autonomous product digitization." />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050814">
+  <title>Robotic Rays — Autonomous robotic 3D scanning</title>
+  <meta name="description" content="Robotic Rays turns physical products into catalog-ready 3D assets with autonomous robotic capture.">
   <style>
-    :root{
-      --bg: #070A12;
-      --panel: rgba(255,255,255,0.06);
-      --panel2: rgba(255,255,255,0.09);
-      --text: rgba(255,255,255,0.90);
-      --muted: rgba(255,255,255,0.65);
-      --line: rgba(255,255,255,0.12);
-      --a: #7C5CFF;
-      --b: #00D1FF;
-      --c: #35FFB6;
-      --shadow: 0 20px 60px rgba(0,0,0,0.55);
+    :root {
+      --ink:#f7f9ff; --muted:#a7b3cd; --bg:#050814; --bg2:#0a1021;
+      --line:rgba(255,255,255,.11); --cyan:#10c8ff; --blue:#2872ff; --violet:#8f63ff;
+      --green:#52f5c1; --max:1200px; --radius:24px;
     }
-
-    *{ box-sizing: border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      color: var(--text);
-      background: radial-gradient(1200px 900px at 10% 10%, rgba(124,92,255,0.18), transparent 50%),
-                  radial-gradient(1200px 900px at 90% 10%, rgba(0,209,255,0.16), transparent 55%),
-                  radial-gradient(1200px 900px at 50% 95%, rgba(53,255,182,0.10), transparent 55%),
-                  var(--bg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      overflow-x:hidden;
-    }
-
-    /* Canvas particles behind everything */
-    #particles{
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      opacity: 0.9;
-    }
-
-    /* Animated glow blobs */
-    .glow{
-      position: fixed;
-      inset: -200px;
-      z-index: -3;
-      filter: blur(70px);
-      opacity: 0.55;
-      background:
-        radial-gradient(closest-side at 20% 20%, rgba(124,92,255,0.35), transparent 60%),
-        radial-gradient(closest-side at 80% 25%, rgba(0,209,255,0.28), transparent 60%),
-        radial-gradient(closest-side at 45% 80%, rgba(53,255,182,0.20), transparent 65%);
-      animation: drift 12s ease-in-out infinite alternate;
-    }
-    @keyframes drift{
-      from{ transform: translate3d(-2%, -1%, 0) scale(1.02); }
-      to  { transform: translate3d( 2%,  1%, 0) scale(1.05); }
-    }
-
-    .wrap{
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 26px 20px 80px;
-    }
-
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 14px;
-      position: sticky;
-      top: 52;
-      backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(7,10,18,0.85), rgba(7,10,18,0.35));
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: 14px 0;
-      z-index: 20;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      letter-spacing: 0.4px;
-      font-weight: 650;
-    }
-    .logo{
-      width: 34px; height: 34px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(124,92,255,0.95), rgba(0,209,255,0.85));
-      box-shadow: 0 10px 30px rgba(124,92,255,0.22);
-      position: relative;
-      overflow:hidden;
-    }
-    .logo::after{
-      content:"";
-      position:absolute; inset:-40%;
-      background: conic-gradient(from 180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.35), rgba(255,255,255,0.0));
-      animation: spin 2.8s linear infinite;
-    }
-    @keyframes spin{ to{ transform: rotate(360deg); } }
-
-    nav{
-      display:flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      align-items:center;
-      justify-content:flex-end;
-    }
-    nav a{
-      color: var(--muted);
-      text-decoration:none;
-      font-size: 14px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      transition: 160ms ease;
-    }
-    nav a:hover{
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-    }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: 12px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      text-decoration:none;
-      font-weight: 600;
-      box-shadow: var(--shadow);
-      transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
-    }
-    .btn:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.09);
-      border-color: rgba(255,255,255,0.22);
-    }
-    .btn.primary{
-      border-color: rgba(124,92,255,0.45);
-      background: linear-gradient(135deg, rgba(124,92,255,0.85), rgba(0,209,255,0.55));
-    }
-    .btn.primary:hover{
-      border-color: rgba(0,209,255,0.55);
-    }
-
-    .hero{
-      padding: 54px 0 26px;
-      display:grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 22px;
-      align-items: start;
-    }
-    @media (max-width: 900px){
-      .hero{ grid-template-columns: 1fr; }
-    }
-
-    .kicker{
-      display:inline-flex;
-      gap: 10px;
-      align-items:center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .dot{
-      width: 8px; height: 8px; border-radius: 999px;
-      background: var(--c);
-      box-shadow: 0 0 20px rgba(53,255,182,0.55);
-    }
-
-    h1{
-      margin: 16px 0 10px;
-      font-size: clamp(34px, 4.2vw, 56px);
-      line-height: 1.06;
-      letter-spacing: -0.6px;
-    }
-    .grad{
-      background: linear-gradient(90deg, rgba(124,92,255,1), rgba(0,209,255,1), rgba(53,255,182,0.9));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .lead{
-      margin: 10px 0 22px;
-      font-size: 17px;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 60ch;
-    }
-
-    .cta{
-      display:flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items:center;
-    }
-
-    .panel{
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position: relative;
-    }
-    .panel::before{
-      content:"";
-      position:absolute; inset:-80px;
-      background: radial-gradient(closest-side at 30% 20%, rgba(124,92,255,0.18), transparent 60%),
-                  radial-gradient(closest-side at 70% 40%, rgba(0,209,255,0.12), transparent 60%);
-      filter: blur(24px);
-      opacity: 0.9;
-      pointer-events:none;
-    }
-
-    .cardTitle{
-      margin: 0 0 8px;
-      font-size: 13px;
-      color: rgba(255,255,255,0.70);
-      letter-spacing: 0.35px;
-      text-transform: uppercase;
-    }
-    .metric{
-      display:flex;
-      gap: 12px;
-      align-items: baseline;
-      margin: 10px 0;
-    }
-    .metric b{ font-size: 22px; }
-    .metric span{ color: var(--muted); font-size: 14px; }
-
-    section{
-      padding: 34px 0;
-    }
-    .sectionHead{
-      display:flex;
-      justify-content:space-between;
-      align-items:end;
-      gap: 18px;
-      margin-bottom: 16px;
-    }
-    h2{
-      margin:0;
-      font-size: 24px;
-      letter-spacing: -0.2px;
-    }
-    .sub{
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-      max-width: 70ch;
-      font-size: 15px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
-
-    .item{
-      padding: 16px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.04);
-      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
-      min-height: 140px;
-    }
-    .item:hover{
-      transform: translateY(-2px);
-      background: rgba(255,255,255,0.07);
-      border-color: rgba(255,255,255,0.16);
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      font-size: 13px;
-      color: rgba(255,255,255,0.75);
-      margin-bottom: 10px;
-    }
-    .pill{
-      width: 10px; height: 10px; border-radius: 3px;
-      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(0,209,255,1));
-      box-shadow: 0 0 18px rgba(0,209,255,0.25);
-    }
-    .item p{
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 14px;
-    }
-
-    .steps{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-    @media (max-width: 900px){ .steps{ grid-template-columns: 1fr; } }
-    .step{
-      padding: 14px 14px 16px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.04);
-    }
-    .num{
-      width: 32px; height: 32px;
-      border-radius: 12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight: 700;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      margin-bottom: 10px;
-    }
-    footer{
-      padding-top: 10px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      color: var(--muted);
-      font-size: 14px;
-      display:flex;
-      justify-content:space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    footer a{ color: rgba(255,255,255,0.78); text-decoration:none; }
-    footer a:hover{ text-decoration: underline; }
-
-    /* scroll reveal */
-    .reveal{
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 500ms ease, transform 500ms ease;
-    }
-    .reveal.visible{
-      opacity: 1;
-      transform: translateY(0);
-    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;z-index:-3;background:radial-gradient(900px 550px at 80% -10%,rgba(40,114,255,.25),transparent 70%),radial-gradient(650px 500px at 10% 25%,rgba(143,99,255,.14),transparent 70%),linear-gradient(#050814,#070b17 70%,#050814)}
+    a{color:inherit}.shell{width:min(var(--max),calc(100% - 40px));margin:auto}.eyebrow{color:var(--cyan);text-transform:uppercase;letter-spacing:.18em;font-size:12px;font-weight:800}.muted{color:var(--muted)}
+    .nav{position:sticky;top:0;z-index:30;background:rgba(5,8,20,.78);border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}
+    .nav-inner{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand img{display:block;width:192px;height:58px;object-fit:contain;object-position:left center}.links{display:flex;align-items:center;gap:28px}.links a{text-decoration:none;color:#c4cee2;font-size:14px}.links a:hover{color:white}
+    .button{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 18px;border:1px solid var(--line);border-radius:999px;text-decoration:none;font-weight:750;line-height:1;transition:.2s ease;background:rgba(255,255,255,.04)}.button:hover{transform:translateY(-2px);border-color:rgba(16,200,255,.55)}.button.primary{background:linear-gradient(110deg,var(--blue),var(--violet));border-color:transparent;box-shadow:0 14px 40px rgba(40,114,255,.25)}
+    .hero{min-height:720px;padding:94px 0 70px;display:grid;grid-template-columns:1.05fr .95fr;gap:58px;align-items:center}.hero h1{font-size:clamp(48px,6.2vw,86px);line-height:.96;letter-spacing:-.055em;margin:16px 0 24px;max-width:820px}.gradient{background:linear-gradient(100deg,#fff 8%,#97ddff 52%,#a67cff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero-copy{font-size:18px;max-width:620px;color:#b8c4da}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.mini-proof{display:flex;gap:28px;flex-wrap:wrap;margin-top:42px}.mini-proof div{border-left:1px solid var(--line);padding-left:14px}.mini-proof b{display:block;font-size:20px}.mini-proof span{font-size:12px;color:var(--muted)}
+    .scanner{position:relative;min-height:525px;border:1px solid var(--line);border-radius:34px;background:linear-gradient(145deg,rgba(16,200,255,.08),rgba(143,99,255,.05));overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.45)}.scanner:before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(16,200,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(16,200,255,.07) 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(to bottom,transparent,#000 15%,#000 80%,transparent);transform:perspective(500px) rotateX(55deg) scale(1.5);transform-origin:bottom}
+    .scan-head{position:absolute;left:30px;right:30px;top:24px;display:flex;justify-content:space-between;font:700 11px/1 monospace;letter-spacing:.12em;color:#8fe7ff}.live{display:flex;gap:7px;align-items:center}.live:before{content:"";width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 14px var(--green)}
+    .object{position:absolute;left:50%;top:51%;width:160px;height:210px;transform:translate(-50%,-50%);border-radius:43% 57% 46% 54% / 38% 38% 62% 62%;background:linear-gradient(145deg,#172d53,#0b1630 62%,#18254a);box-shadow:inset 13px 8px 34px rgba(93,213,255,.28),inset -22px -12px 30px rgba(143,99,255,.15),0 30px 60px #000;animation:float 5s ease-in-out infinite}.object:after{content:"";position:absolute;inset:12px;border:1px solid rgba(90,220,255,.42);border-radius:inherit;filter:drop-shadow(0 0 8px var(--cyan))}
+    .orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(16,200,255,.3);border-radius:50%;transform:translate(-50%,-50%) rotateX(68deg)}.orbit.one{width:390px;height:390px}.orbit.two{width:300px;height:300px;border-color:rgba(143,99,255,.35)}.node{position:absolute;width:9px;height:9px;border:2px solid #fff;background:var(--cyan);border-radius:50%;box-shadow:0 0 16px var(--cyan)}.n1{left:12%;top:36%}.n2{right:13%;top:27%}.n3{right:18%;bottom:23%}.n4{left:17%;bottom:19%}
+    .scanline{position:absolute;left:8%;right:8%;height:1px;top:22%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 22px 4px rgba(16,200,255,.55);animation:scan 4s ease-in-out infinite}.status{position:absolute;bottom:22px;left:24px;right:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.status span{padding:10px;border:1px solid var(--line);background:rgba(4,8,19,.75);border-radius:10px;font:10px/1.3 monospace;color:#b3bed4}.status b{display:block;color:white;font-size:12px}
+    section{padding:105px 0}.section-head{max-width:740px;margin-bottom:48px}.section-head h2{font-size:clamp(36px,4.6vw,62px);line-height:1.03;letter-spacing:-.045em;margin:12px 0 18px}.section-head p{font-size:18px;color:var(--muted);margin:0}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:rgba(255,255,255,.025)}.metric{padding:34px 28px;border-right:1px solid var(--line)}.metric:last-child{border:0}.metric strong{font-size:clamp(34px,4vw,54px);line-height:1;letter-spacing:-.05em;display:block}.metric p{color:var(--muted);margin:12px 0 0;font-size:14px}
+    .video{aspect-ratio:16/7.5;border:1px solid var(--line);border-radius:30px;display:grid;place-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(40,114,255,.18),transparent 42%),#080d1c}.video:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(16,200,255,.06),transparent)}.play{width:74px;height:74px;border:1px solid rgba(255,255,255,.3);border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);font-size:24px;padding-left:4px}.video-label{position:absolute;left:28px;bottom:24px}.video-label b{display:block;font-size:22px}.video-label span{color:var(--muted)}
+    .flow{display:grid;grid-template-columns:repeat(6,1fr);margin-top:24px;gap:8px}.flow div{position:relative;padding:18px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}.flow small{display:block;color:var(--cyan);font:11px/1 monospace;margin-bottom:8px}.flow b{font-size:13px}.flow div:not(:last-child):after{content:"→";position:absolute;right:-9px;top:50%;z-index:2;color:var(--cyan);transform:translateY(-50%)}
+    .uses{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.use{min-height:230px;padding:26px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(150deg,rgba(255,255,255,.045),rgba(255,255,255,.015));position:relative;overflow:hidden}.use:after{content:attr(data-symbol);position:absolute;right:12px;bottom:-24px;font-size:112px;line-height:1;color:rgba(87,167,255,.08);font-weight:900}.use span{color:var(--cyan);font-size:12px;letter-spacing:.1em}.use h3{font-size:22px;margin:45px 0 8px}.use p{color:var(--muted);margin:0}
+    .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}.quadrant{min-height:440px;border:1px solid var(--line);border-radius:24px;padding:34px 28px 44px 54px;position:relative;background:rgba(255,255,255,.025)}.axis-x,.axis-y{position:absolute;background:rgba(255,255,255,.26)}.axis-x{left:54px;right:24px;bottom:49px;height:1px}.axis-y{left:54px;top:24px;bottom:49px;width:1px}.axis-title{position:absolute;color:var(--muted);font:10px/1 monospace;letter-spacing:.1em}.axis-title.x{bottom:20px;right:26px}.axis-title.y{left:14px;top:25px;writing-mode:vertical-rl;transform:rotate(180deg)}.company{position:absolute;padding:6px 9px;border-radius:8px;background:#111a30;border:1px solid var(--line);font-size:11px}.rr{right:8%;top:9%;background:linear-gradient(110deg,var(--blue),var(--violet));font-weight:800;box-shadow:0 10px 30px rgba(40,114,255,.3)}.artec{left:17%;top:18%}.allsides{left:51%;top:33%}.fibbl{right:11%;top:53%}.polycam{left:36%;top:65%}
+    .difference{border:1px solid var(--line);border-radius:24px;padding:36px;background:linear-gradient(145deg,rgba(40,114,255,.1),rgba(143,99,255,.05))}.difference h3{font-size:32px;line-height:1.12;margin:8px 0 28px}.check{display:grid;grid-template-columns:35px 1fr;gap:12px;margin:22px 0}.check i{font-style:normal;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(82,245,193,.12);color:var(--green)}.check b{display:block}.check span{color:var(--muted);font-size:14px}
+    .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stage{padding:30px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.025)}.stage.active{border-color:rgba(16,200,255,.45);background:linear-gradient(145deg,rgba(16,200,255,.09),rgba(40,114,255,.05))}.stage small{color:var(--cyan);font-weight:800;letter-spacing:.12em}.stage h3{font-size:23px;margin:28px 0 10px}.stage p{color:var(--muted);margin:0}.traction{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.traction div{padding:28px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.025)}.traction strong{font-size:32px}.traction span{display:block;color:var(--muted)}
+    .cta-box{padding:70px;border:1px solid rgba(16,200,255,.28);border-radius:32px;background:radial-gradient(600px 260px at 90% 0,rgba(40,114,255,.25),transparent),linear-gradient(140deg,#0c1731,#0a0d1b);display:flex;justify-content:space-between;align-items:end;gap:40px}.cta-box h2{font-size:clamp(38px,5vw,66px);line-height:1;margin:12px 0 18px;letter-spacing:-.05em;max-width:720px}.cta-box p{color:var(--muted);max-width:600px;font-size:17px}.cta-actions{display:flex;flex-direction:column;gap:10px;min-width:190px}
+    footer{padding:34px 0 44px;border-top:1px solid var(--line);color:var(--muted)}.footer-inner{display:flex;justify-content:space-between;gap:25px;align-items:center}.footer-links{display:flex;gap:20px}.footer-links a{text-decoration:none}.footer-brand img{width:170px;height:54px;object-fit:contain;object-position:left center}
+    .reveal{opacity:1;transform:none;transition:opacity .65s ease,transform .65s ease}.js .reveal{opacity:0;transform:translateY(16px)}.js .reveal.in{opacity:1;transform:none}@keyframes scan{0%,100%{top:22%}50%{top:73%}}@keyframes float{50%{transform:translate(-50%,-53%) rotate(2deg)}}
+    @media(max-width:900px){.links a:not(.button){display:none}.hero{grid-template-columns:1fr;padding-top:65px}.scanner{min-height:470px}.metrics{grid-template-columns:1fr 1fr}.metric:nth-child(2){border-right:0}.metric:nth-child(-n+2){border-bottom:1px solid var(--line)}.flow{grid-template-columns:repeat(3,1fr)}.uses,.roadmap{grid-template-columns:1fr}.compare{grid-template-columns:1fr}.cta-box{padding:45px;display:block}.cta-actions{margin-top:30px;flex-direction:row}.traction{grid-template-columns:1fr}}
+    @media(max-width:600px){.shell{width:min(100% - 24px,var(--max))}.brand img{width:150px}.nav-inner{height:68px}.links{gap:8px}.links .button{padding:11px 13px}.hero h1{font-size:47px}.hero{gap:38px;min-height:auto}.scanner{min-height:410px}.object{width:125px;height:165px}.orbit.one{width:310px;height:310px}.orbit.two{width:230px;height:230px}.status{grid-template-columns:1fr}.status span:nth-child(n+2){display:none}section{padding:78px 0}.metrics{grid-template-columns:1fr}.metric{border-right:0;border-bottom:1px solid var(--line)!important}.metric:last-child{border:0!important}.flow{grid-template-columns:1fr 1fr}.video{aspect-ratio:4/3}.uses{grid-template-columns:1fr}.traction{grid-template-columns:1fr}.cta-box{padding:34px 24px}.cta-actions{flex-direction:column}.footer-inner{align-items:flex-start;flex-direction:column}.footer-links{flex-wrap:wrap}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none}.scanline,.object{animation:none}}
   </style>
 </head>
-
-<body>
-  <canvas id="particles"></canvas>
-  <div class="glow"></div>
-
-  <div class="wrap">
-
-    <div style="
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(124,92,255,0.16);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      backdrop-filter: blur(10px);
-    ">
-      <div style="max-width:1120px;margin:0 auto;padding:10px 20px;
-        display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
-        <div style="color:rgba(255,255,255,0.85);font-size:13px;">
-          🚧 <b>Under construction:</b> We’re iterating quickly—website content and demos will be updated regularly.
-        </div>
-        <a class="btn" href="#contact" style="padding:8px 12px;border-radius:12px;font-size:13px;box-shadow:none;">
-          Join pilot list
-        </a>
-      </div>
+<body><script>document.documentElement.classList.add('js')</script>
+  <nav class="nav">
+    <div class="shell nav-inner">
+      <a class="brand" href="#top" aria-label="Robotic Rays home"><img src="media/logos/robotic-rays-logo-negative.png" alt="Robotic Rays"></a>
+      <div class="links"><a href="#problem">Why 3D</a><a href="#solution">Technology</a><a href="#applications">Applications</a><a href="#roadmap">Roadmap</a><a class="button" href="#contact">Start a pilot ↗</a></div>
     </div>
+  </nav>
 
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>RoboticRays</div>
-      </div>
-      <nav>
-        <a href="#build">What we build</a>
-        <a href="#how">How it works</a>
-        <a href="#status">Status</a>
-        <a class="btn" href="#contact">Contact</a>
-      </nav>
-    </header>
-
-    <div class="hero">
+  <main id="top">
+    <div class="shell hero">
       <div class="reveal">
-        <div class="kicker"><span class="dot"></span> 3D Vision + Robotics • Autonomous Digitization</div>
-        <h1>
-          Turn physical products into
-          <span class="grad">high-quality 3D assets</span>
-          — automatically.
-        </h1>
-        <p class="lead">
-          RoboticRays builds autonomous scanning systems that capture products and objects, reconstruct accurate 3D models,
-          and deliver consistent digital assets at scale. Built for speed, repeatability, and measurable quality.
-        </p>
-        <div class="cta">
-          <a class="btn primary" href="#contact">Get early access</a>
-          <a class="btn" href="#how">See how it works</a>
-        </div>
+        <div class="eyebrow">Autonomous robotic 3D scanning</div>
+        <h1>3D capture is the bottleneck. <span class="gradient">We make it autonomous.</span></h1>
+        <p class="hero-copy">Robotic Rays turns physical products into catalog-ready 3D assets through autonomous scene understanding, scan planning, controlled capture, reconstruction, and quality feedback.</p>
+        <div class="actions"><a class="button primary" href="#contact">Explore a pilot →</a><a class="button" href="#solution">See the system</a></div>
+        <div class="mini-proof"><div><b>5–10 min</b><span>Target delivery per asset</span></div><div><b>No operator</b><span>Closed-loop capture</span></div><div><b>Web ready</b><span>Commercial outputs</span></div></div>
       </div>
-
-      <aside class="panel reveal" aria-label="Highlights">
-        <div class="cardTitle">Digitization Cell — MVP Targets</div>
-        <div class="metric"><b>Hands-free</b> <span>robot-driven capture</span></div>
-        <div class="metric"><b>Consistent</b> <span>repeatable viewpoints + lighting</span></div>
-        <div class="metric"><b>Scalable</b> <span>batch workflows for catalog growth</span></div>
-        <div style="height:10px"></div>
-        <div class="cardTitle">Outputs</div>
-        <div style="color:var(--muted); line-height:1.55; font-size:14px;">
-          3D mesh + turntable render • measurements • QC report • API-ready asset bundle
-        </div>
-      </aside>
+      <div class="scanner reveal" aria-label="Illustration of an autonomous 3D scan in progress">
+        <div class="scan-head"><span>RAYER v0.1 / SCAN SPACE</span><span class="live">CAPTURING</span></div><div class="orbit one"></div><div class="orbit two"></div><div class="object"></div><i class="node n1"></i><i class="node n2"></i><i class="node n3"></i><i class="node n4"></i><div class="scanline"></div>
+        <div class="status"><span><b>84%</b> COVERAGE</span><span><b>126</b> VIEWS</span><span><b>PASS</b> QUALITY LOOP</span></div>
+      </div>
     </div>
 
-    <section id="build">
-      <div class="sectionHead reveal">
-        <div>
-          <h2>What we build</h2>
-          <p class="sub">A robotic product digitization pipeline—from capture to clean 3D assets.</p>
-        </div>
-      </div>
+    <section id="problem"><div class="shell">
+      <div class="section-head reveal"><div class="eyebrow">The scale gap</div><h2>3D content works. Capture doesn’t scale.</h2><p>Interactive 3D helps customers understand shape, material, and detail. But creating each asset is still manual, slow, and costly.</p></div>
+      <div class="metrics reveal"><div class="metric"><strong>2×</strong><p>Higher conversion with interactive 3D</p></div><div class="metric"><strong>−30%</strong><p>Fewer returns with better product understanding</p></div><div class="metric"><strong>95%</strong><p>Of products still have no 3D model</p></div><div class="metric"><strong>€150–500</strong><p>Typical manual cost for one 3D asset today</p></div></div>
+    </div></section>
 
-      <div class="grid">
-        <div class="item reveal">
-          <div class="badge"><span class="pill"></span><b>Autonomous capture</b></div>
-          <p>Robot-guided camera motion, structured viewpoints, and repeatable lighting for consistent scans.</p>
-        </div>
-        <div class="item reveal">
-          <div class="badge"><span class="pill"></span><b>3D reconstruction</b></div>
-          <p>High-detail 3D reconstruction with reliable scale and quality checks.</p>
-        </div>
-        <div class="item reveal">
-          <div class="badge"><span class="pill"></span><b>Asset delivery</b></div>
-          <p>Clean mesh, optional materials, turntable renders, and QC metrics—ready for web and ecommerce pipelines.</p>
-        </div>
-      </div>
-    </section>
+    <section id="solution"><div class="shell">
+      <div class="section-head reveal"><div class="eyebrow">The autonomous capture loop</div><h2>From real object to usable 3D asset.</h2><p>The robot does more than follow a fixed path. It observes, plans, captures, reconstructs, and returns for missing information.</p></div>
+      <div class="video reveal"><div class="play" aria-hidden="true">▶</div><div class="video-label"><b>Rayer v0.1 in action</b><span>Product demo video placeholder</span></div></div>
+      <div class="flow reveal"><div><small>01</small><b>See scene</b></div><div><small>02</small><b>Plan motion</b></div><div><small>03</small><b>Capture views</b></div><div><small>04</small><b>Reconstruct</b></div><div><small>05</small><b>Improve</b></div><div><small>06</small><b>Deliver</b></div></div>
+    </div></section>
 
-    <section id="how">
-      <div class="sectionHead reveal">
-        <div>
-          <h2>How it works</h2>
-          <p class="sub">A simple, reliable loop designed for real-world production.</p>
-        </div>
-      </div>
+    <section id="applications"><div class="shell">
+      <div class="section-head reveal"><div class="eyebrow">One scan, many outcomes</div><h2>Commercial content—not just a raw mesh.</h2><p>Optimized assets that fit the workflows customers already use.</p></div>
+      <div class="uses"><article class="use reveal" data-symbol="360"><span>COMMERCE</span><h3>Interactive 3D</h3><p>Explorable product views embedded directly into product pages and digital catalogs.</p></article><article class="use reveal" data-symbol="AR"><span>IMMERSIVE</span><h3>AR / VR integration</h3><p>Export-ready models for virtual try-on, spatial experiences, and visualization.</p></article><article class="use reveal" data-symbol="▶"><span>MARKETING</span><h3>Renders & video</h3><p>Turntable animations, campaign visuals, and product variations from one asset.</p></article></div>
+    </div></section>
 
-      <div class="steps">
-        <div class="step reveal">
-          <div class="num">1</div>
-          <b>Capture</b>
-          <p class="sub">Robot executes viewpoints and collects images/depth reliably.</p>
-        </div>
-        <div class="step reveal">
-          <div class="num">2</div>
-          <b>Reconstruct</b>
-          <p class="sub">Build geometry, calibrate scale, and validate coverage.</p>
-        </div>
-        <div class="step reveal">
-          <div class="num">3</div>
-          <b>Refine</b>
-          <p class="sub">Denoise, fill holes, optimize mesh, generate deliverables.</p>
-        </div>
-        <div class="step reveal">
-          <div class="num">4</div>
-          <b>Publish</b>
-          <p class="sub">Export asset bundle + QC report for downstream use.</p>
-        </div>
-      </div>
-    </section>
+    <section><div class="shell">
+      <div class="section-head reveal"><div class="eyebrow">Why Robotic Rays</div><h2>The missing quadrant.</h2><p>Quality without automation does not scale. Automation without quality does not solve the problem.</p></div>
+      <div class="compare"><div class="quadrant reveal"><div class="axis-x"></div><div class="axis-y"></div><span class="axis-title x">MORE AUTONOMOUS →</span><span class="axis-title y">HIGHER ACCURACY →</span><i class="company artec">Artec3D</i><i class="company allsides">AllSides</i><i class="company fibbl">Fibbl</i><i class="company polycam">Polycam</i><i class="company rr">ROBOTIC RAYS</i></div><div class="difference reveal"><div class="eyebrow">Hardware + software as one</div><h3>Repeatable asset quality with no operator in the loop.</h3><div class="check"><i>✓</i><div><b>Purpose-built robotics</b><span>Controlled, repeatable camera motion around real objects.</span></div></div><div class="check"><i>✓</i><div><b>Proprietary closed loop</b><span>Reconstruction quality feeds back into the next capture decision.</span></div></div><div class="check"><i>✓</i><div><b>Deployment-ready outputs</b><span>Assets optimized for web, catalogs, AR/VR, and visual content.</span></div></div></div></div>
+    </div></section>
 
-    <section id="status">
-      <div class="sectionHead reveal">
-        <div>
-          <h2>Status</h2>
-          <p class="sub">We’re building the MVP and looking for pilot partners.</p>
-        </div>
-      </div>
+    <section id="roadmap"><div class="shell">
+      <div class="section-head reveal"><div class="eyebrow">Start narrow. Expand wide.</div><h2>Building toward robotic object intelligence.</h2><p>E-commerce is the commercial entry point for a broader physical-AI platform.</p></div>
+      <div class="roadmap reveal"><article class="stage active"><small>NOW</small><h3>3D product catalogs</h3><p>E-commerce, retail, fashion, luxury, footwear, artisans, and SMEs.</p></article><article class="stage"><small>NEXT</small><h3>Inspection & digital twins</h3><p>Inventory capture, asset documentation, and repeatable condition monitoring.</p></article><article class="stage"><small>LONG TERM</small><h3>Physical AI</h3><p>Structured real-world object intelligence for robots and embodied AI.</p></article></div>
+      <div class="traction reveal"><div><strong>Prototype built</strong><span>Robotic system, end-to-end scanning workflow, and real scan outputs.</span></div><div><strong>2 signed LOIs</strong><span>Customer validation with active pilot discussions.</span></div></div>
+    </div></section>
 
-      <div class="panel reveal">
-        <div class="cardTitle">Pilot fit</div>
-        <div style="color:var(--muted); line-height:1.6; font-size:14px;">
-          If you work with physical objects that benefit from high-quality digital representation, such as
-          products, crafted goods, design objects, or curated collections and care about consistency and visual
-          fidelity, we’d love to talk. We’re especially interested in teams that want repeatable results, predictable quality, and workflows
-          that scale beyond one-off manual scans.
-          We share technical architecture and performance details during pilot conversations (and under NDA when needed).
-        </div>
-      </div>
+    <section id="contact"><div class="shell"><div class="cta-box reveal"><div><div class="eyebrow">Pilot with us</div><h2>Bring your products into the third dimension.</h2><p>We’re looking for pilot partners, strategic collaborators, and early adopters ready to scale 3D content creation.</p></div><div class="cta-actions"><a class="button primary" href="mailto:info@roboticrays.com?subject=Robotic%20Rays%20pilot">Start a conversation →</a><a class="button" href="https://platform.roboticrays.com">Visit the platform ↗</a></div></div></div></section>
+  </main>
 
-      <div class="panel reveal" style="margin-top:14px;">
-        <div class="cardTitle">Who it’s for</div>
-        <div style="color:var(--muted); line-height:1.6; font-size:14px;">
-          RoboticRays is designed for teams working with physical objects that deserve high-quality digital
-          representation from commercial catalogs to crafted goods, design objects, and curated collections.
-        </div>
-      </div>
-
-    </section>
-
-    <section id="contact">
-      <div class="sectionHead reveal">
-        <div>
-          <h2>Contact</h2>
-          <p class="sub">Tell us what you digitize and what outputs you need. We’ll reply quickly.</p>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="item reveal">
-          <div class="badge"><span class="pill"></span><b>Email</b></div>
-          <p><a href="mailto:founder.roboticrays@gmail.com" style="color:rgba(255,255,255,0.85); text-decoration:none;">founder.roboticrays@gmail.com</a></p>
-        </div>
-        <div class="item reveal">
-          <div class="badge"><span class="pill"></span><b>One-liner</b></div>
-          <p>“We automate product scanning to generate clean, web-ready 3D assets at scale.”</p>
-        </div>
-        <div class="item reveal">
-          <div class="badge"><span class="pill"></span><b>Next</b></div>
-          <p>Add a demo video/GIF here later for instant credibility.</p>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <div>© <span id="year"></span> RoboticRays</div>
-      <div>
-        <a href="#build">What we build</a> ·
-        <a href="#how">How it works</a> ·
-        <a href="mailto:founder.roboticrays@gmail.com">Email</a>
-      </div>
-    </footer>
-  </div>
-
+  <footer><div class="shell footer-inner"><a class="footer-brand" href="#top"><img src="media/logos/robotic-rays-logo-negative.png" alt="Robotic Rays"></a><span>© <span id="year"></span> Robotic Rays</span><div class="footer-links"><a href="mailto:info@roboticrays.com">info@roboticrays.com</a><a href="https://www.linkedin.com/company/roboticrays/">LinkedIn ↗</a></div></div></footer>
   <script>
-    // year
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    // scroll reveal
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) e.target.classList.add("visible");
-      }
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-
-    // lightweight particle field
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    let w, h, dpr;
-    function resize(){
-      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      w = canvas.width = Math.floor(innerWidth * dpr);
-      h = canvas.height = Math.floor(innerHeight * dpr);
-      canvas.style.width = innerWidth + "px";
-      canvas.style.height = innerHeight + "px";
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    const N = 90;
-    const pts = Array.from({length:N}, () => ({
-      x: Math.random()*w,
-      y: Math.random()*h,
-      vx: (Math.random()-0.5)*0.25*dpr,
-      vy: (Math.random()-0.5)*0.25*dpr,
-      r: (Math.random()*1.6 + 0.6)*dpr
-    }));
-
-    function line(a,b){
-      const dx=a.x-b.x, dy=a.y-b.y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist < 140*dpr){
-        const alpha = (1 - dist/(140*dpr)) * 0.12;
-        ctx.globalAlpha = alpha;
-        ctx.beginPath();
-        ctx.moveTo(a.x,a.y);
-        ctx.lineTo(b.x,b.y);
-        ctx.stroke();
-      }
-    }
-
-    function tick(){
-      ctx.clearRect(0,0,w,h);
-      ctx.globalAlpha = 1;
-      ctx.lineWidth = 1*dpr;
-      ctx.strokeStyle = "rgba(255,255,255,0.35)";
-      ctx.fillStyle = "rgba(255,255,255,0.55)";
-
-      for (const p of pts){
-        p.x += p.vx; p.y += p.vy;
-        if(p.x < 0 || p.x > w) p.vx *= -1;
-        if(p.y < 0 || p.y > h) p.vy *= -1;
-
-        ctx.globalAlpha = 0.75;
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fill();
-      }
-
-      for (let i=0;i<pts.length;i++){
-        for (let j=i+1;j<pts.length;j++){
-          line(pts[i], pts[j]);
-        }
-      }
-
-      requestAnimationFrame(tick);
-    }
-    tick();
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
   </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # RoboticRays
 
-RoboticRays builds autonomous 3D vision and robotics systems for product digitization.
+Robotic Rays builds autonomous robotic vision systems that turn physical products into catalog-ready 3D assets.
 
 ## Website
 https://roboticrays.github.io
@@ -12,4 +12,4 @@ This repository contains the source code for the RoboticRays public website.
 The site is built as a static HTML/CSS/JS project and hosted on GitHub Pages.
 
 ## Contact
-founder.roboticrays@gmail.com
+info@roboticrays.com
