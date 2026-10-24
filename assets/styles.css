@@ -252,3 +252,90 @@ p{color:var(--muted)}
 }
 @media(pointer:coarse){.film-control,.round-link{min-width:44px;min-height:44px}.stage-bottom{bottom:6px}}
 @media(prefers-reduced-motion:reduce){.depth-surface{transform:none!important}.motion-item{opacity:1!important;transform:none!important}}
+
+/* Comfortable reading at normal zoom, including intermediate screen widths. */
+body{font-size:18px;line-height:1.7}
+.hero-description{font-size:19px;line-height:1.75;max-width:440px}
+.section-intro,.commerce-title p,.use-row p,.approach-heading>p,.process-step p,.progress-intro,.vision-copy>p,.team-heading>p,.team-member>p:last-child,.contact-copy p{font-size:18px;line-height:1.75}
+.section-intro,.team-heading>p{max-width:420px}
+.commerce-title p,.progress-intro{max-width:380px}
+.use-row p,.process-step p,.team-member>p:last-child{max-width:none}
+.approach-heading>p{max-width:340px}
+.vision-copy>p{max-width:560px}
+.contact-copy{max-width:360px}
+.progress-fact p,.vision-copy .vision-secondary,.faq-list details p{font-size:16px;line-height:1.75;max-width:none}
+.faq-list summary{font-size:17px;line-height:1.55}
+.button,.text-link,.hero-actions .text-link,.commerce-title .text-link{font-size:15px}
+.main-navigation>a:not(.button),.main-navigation .button,.menu-toggle{font-size:14px}
+.main-navigation .button{min-height:48px}
+.eyebrow,.section-kicker .eyebrow,.kicker-note,.feature-topline .eyebrow,.figure-index,.contact-topline .eyebrow,.film-dialog-header .eyebrow{font-size:12px}
+.availability,.contact-topline .availability{font-size:13px}
+.hero-footnote,.hero-bottom,.feature-caption,.quiet-note,.work-caption>span,.work-note p,.prototype-tag,.use-detail,.row-number,.step-top,.approach-footnote p,.vision-art-label,.team-member .team-role,.footer-top p,.footer-top .text-link,.footer-bottom,.dialog-caption,.video-error{font-size:14px;line-height:1.65}
+.feature-caption strong{font-size:15px}
+.media-label{font-size:12px;line-height:1.5;max-width:55%}
+.film-control,.preview-play,.dialog-close,.preview-top{font-size:13px}
+.film-control{min-height:44px;flex:none}
+.preview-play{min-height:44px}
+.contact-email{font-size:16px}
+.vision-timeline .eyebrow{font-size:12px}
+.vision-timeline strong{font-size:16px}
+.work-caption{flex-wrap:wrap;gap:8px 16px}
+.work-caption h3{font-size:20px}
+.use-row h3{font-size:28px}
+.team-member h3{font-size:25px}
+.progress-fact h3{font-size:20px}
+.process-step h3{font-size:34px}
+h2{line-height:1.08}
+.commerce-title h2,.approach h2,.progress-layout h2{font-size:clamp(42px,4.4vw,64px)}
+.vision-copy h2,.faq-layout h2{font-size:clamp(40px,3.8vw,56px)}
+.small-rule{flex:none}
+@media(max-width:1000px){
+  .approach-heading{display:block}
+  .approach-heading>p{max-width:560px;margin-top:24px}
+  .hero-description,.section-intro,.commerce-title p,.use-row p,.process-step p,.progress-intro,.vision-copy>p,.team-heading>p,.team-member>p:last-child,.contact-copy p{font-size:17px}
+  .hero-actions{gap:16px}
+}
+@media(max-width:700px){
+  body{font-size:17px}
+  .hero-description{font-size:18px;max-width:none}
+  .section-intro,.commerce-title p,.use-row p,.approach-heading>p,.process-step p,.progress-intro,.vision-copy>p,.team-heading>p,.team-member>p:last-child,.contact-copy p{font-size:17px;line-height:1.7}
+  .hero-topline,.contact-topline{flex-wrap:wrap;gap:12px 18px}
+  .hero-topline>.eyebrow{font-size:12px;max-width:190px}
+  .main-navigation>a:not(.button),.main-navigation .button{font-size:16px}
+  .hero-actions .button,.hero-actions .text-link,.commerce-title .text-link{font-size:15px}
+  .hero-actions{gap:14px 22px}
+  .hero-actions .button{padding-inline:18px}
+  .hero-footnote,.hero-bottom,.feature-caption,.quiet-note,.work-caption>span,.work-note p,.use-detail,.approach-footnote p,.team-member .team-role,.footer-top p,.footer-top .text-link,.footer-bottom,.dialog-caption,.video-error{font-size:13px}
+  .work-note{flex-wrap:wrap}
+  .work-note p{flex:1;min-width:0}
+  .work-caption h3{font-size:19px}
+  .use-row h3{font-size:25px}
+  .process-step h3{font-size:29px}
+  .progress-fact h3{font-size:18px}
+  .team-member{padding-left:66px}
+  .team-member h3{font-size:24px}
+  .section-heading h2,.commerce-title h2,.approach h2,.progress-layout h2{font-size:44px}
+  .vision-copy h2,.faq-layout h2{font-size:40px}
+  .faq-list summary{font-size:16px}
+  .vision-timeline strong{font-size:15px}
+  .footer-top{grid-template-columns:1fr}
+  .footer-top p,.footer-top .text-link{justify-self:start}
+  .footer-top .text-link{grid-column:auto}
+  .footer-bottom{gap:12px 20px}
+  .feature-topline{gap:10px}
+}
+@media(max-width:360px){
+  .section-heading h2,.commerce-title h2,.approach h2,.progress-layout h2{font-size:40px}
+  .vision-copy h2,.faq-layout h2{font-size:37px}
+  .hero-actions{gap:12px 18px}
+  .hero-actions .button{padding-inline:15px;gap:15px}
+  .hero-actions .text-link{gap:10px}
+  .feature-topline .eyebrow{max-width:190px}
+  .stage-bottom{left:10px;right:10px}
+}
+@media(max-width:700px){
+  .team-member{padding-left:0;display:grid;grid-template-columns:50px minmax(0,1fr);column-gap:14px}
+  .team-marker{position:static;grid-column:1;grid-row:1/3;margin-bottom:0}
+  .team-member h3,.team-member .team-role{grid-column:2}
+  .team-member>p:last-child{grid-column:1/-1;margin-top:20px}
+}
