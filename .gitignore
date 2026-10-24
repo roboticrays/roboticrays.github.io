@@ -1,0 +1,9 @@
+# Private reference material. Never publish this directory or its contents.
+/website_contents/
+
+# Local development and review output.
+/node_modules/
+/output/
+/.preview/
+__pycache__/
+.DS_Store
