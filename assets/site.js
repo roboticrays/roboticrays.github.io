@@ -171,3 +171,74 @@ filmDialog.addEventListener('close', cleanUpFilm);
 dialogVideo.addEventListener('error', () => {
   if (filmDialog.open) videoError.hidden = false;
 });
+
+// Reveal content once on entry. Without motion support, everything stays visible.
+const motionTargets = [...document.querySelectorAll(
+  '.hero-topline, .hero h1, .hero-description, .hero-actions, .hero-footnote, ' +
+  '.hero-feature, .section-kicker, section h2, .section-intro, .work-item, ' +
+  '.use-row, .process-step, .progress-fact, .vision-copy > p, .vision-timeline, ' +
+  '.team-member, .faq-list, .contact-copy'
+)];
+let revealObserver = null;
+
+function configureReveals() {
+  document.documentElement.classList.remove('motion-ready');
+  if (revealObserver) revealObserver.disconnect();
+  if (reducedMotion.matches || !('IntersectionObserver' in window)) {
+    motionTargets.forEach(element => element.classList.add('is-visible'));
+    return;
+  }
+  revealObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
+    }
+  }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+  for (const element of motionTargets) {
+    element.classList.add('motion-item');
+    if (element.matches('.work-item, .process-step, .team-member')) {
+      const peers = [...element.parentElement.children];
+      element.style.setProperty('--reveal-delay', Math.min(peers.indexOf(element), 2) * 70 + 'ms');
+    }
+    revealObserver.observe(element);
+  }
+  document.documentElement.classList.add('motion-ready');
+}
+configureReveals();
+reducedMotion.addEventListener('change', configureReveals);
+
+// Small, bounded perspective changes on fine pointers only. No motion on touch.
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+const depthSurfaces = [...document.querySelectorAll('[data-depth]')];
+for (const surface of depthSurfaces) {
+  let bounds = null;
+  let frame = 0;
+  let position = { x: 0, y: 0 };
+  const resetDepth = () => {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    bounds = null;
+    surface.style.removeProperty('--tilt-x');
+    surface.style.removeProperty('--tilt-y');
+  };
+  surface.addEventListener('pointermove', event => {
+    if (reducedMotion.matches || !finePointer.matches || event.pointerType === 'touch') return;
+    bounds ||= surface.getBoundingClientRect();
+    position = {
+      x: Math.max(-1, Math.min(1, (event.clientX - bounds.left) / bounds.width * 2 - 1)),
+      y: Math.max(-1, Math.min(1, (event.clientY - bounds.top) / bounds.height * 2 - 1))
+    };
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      surface.style.setProperty('--tilt-x', (-position.y * 2).toFixed(2) + 'deg');
+      surface.style.setProperty('--tilt-y', (position.x * 3).toFixed(2) + 'deg');
+      frame = 0;
+    });
+  });
+  surface.addEventListener('pointerleave', resetDepth);
+  window.addEventListener('blur', resetDepth);
+  window.addEventListener('scroll', resetDepth, { passive: true });
+  reducedMotion.addEventListener('change', resetDepth);
+  finePointer.addEventListener('change', resetDepth);
+}

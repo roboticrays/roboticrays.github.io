@@ -16,7 +16,7 @@ Static HTML, CSS and JavaScript, hosted on GitHub Pages. No package installation
 - `media/images/`: lightweight video posters.
 - `media/video/`: approved product reconstruction videos prepared for the web.
 
-Videos load only when requested. The gallery opens native video playback in a keyboard-accessible dialog; visitors without JavaScript can use direct video links.
+Videos load only when requested. Their baked-in white canvas is blended into the tinted presentation surfaces with CSS; the video files themselves are unchanged. Text reveals and subtle pointer-based perspective effects respect reduced-motion preferences; pointer effects are disabled on touch devices. The gallery opens native video playback in a keyboard-accessible dialog; visitors without JavaScript can use direct video links.
 
 ## Private reference material
 
